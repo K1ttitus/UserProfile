@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Modal, TextInput, Button } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, Modal, TextInput,} from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import editIcon from '../assets/icon/edit.png';
 
-const Header = ({ name,surname, description }) => {
+const Header = ({ name,surname, description , setUserName, setUserSurname }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false); 
-  const [userName, setUserName] = useState(name);
-  const [userSurname, setUserSurname] = useState(surname); 
   const [userDescription, setUserDescription] = useState(description); 
   const [userEmail, setUserEmail] = useState('yanichsa.plo@spumail.net'); 
   const [userPhone, setUserPhone] = useState('xxxxxxxxxx');
   const [profileImage, setProfileImage] = useState(null);
+  const [backgroundImage, setBackgroungImage] = useState(null);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -21,12 +20,23 @@ const Header = ({ name,surname, description }) => {
       aspect: [1, 1],
       quality: 1,
     });
-
+    
     if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
+      setProfileImage(result.assets[0].uri); 
     }
   };
-
+  const pickImage2 = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+    
+    if (!result.canceled) {
+      setBackgroungImage(result.assets[0].uri); 
+    }
+  };
   const handleSave = () => {
     setEditModalVisible(false);
   };
@@ -34,7 +44,12 @@ const Header = ({ name,surname, description }) => {
   return (
     
     <View style={styles.container}>
-      <View style={styles.headerBackground} />
+      <TouchableOpacity onPress={pickImage2} >
+        <Image 
+          style={styles.headerBackground}
+          source={backgroundImage ? { uri: backgroundImage } : { uri: 'https://via.placeholder.com/100' }} 
+        />
+      </TouchableOpacity>
       <TouchableOpacity onPress={pickImage}>
         <Image 
           style={styles.avatar} 
@@ -46,7 +61,7 @@ const Header = ({ name,surname, description }) => {
       </TouchableOpacity>
       <View style={styles.textWrapper}>
   <View style={styles.nameRow}>
-    <Text style={styles.name}>{userName} {userSurname}</Text>
+    <Text style={styles.name}>{name} {surname}</Text>
     <TouchableOpacity style={styles.detailsButton} onPress={() => setModalVisible(true)}>
       <Text style={styles.detailsText}>Contact</Text>
     </TouchableOpacity>
@@ -63,9 +78,9 @@ const Header = ({ name,surname, description }) => {
     <View style={styles.modalContainer}>
       <TouchableWithoutFeedback onPress={() => {}}>
         <View style={styles.modalContent}>
-        <Text style={styles.modalTitle}>Name: {userName} {userSurname}</Text>
-          <View style={styles.divider} />
-
+        <Text style={styles.modalTitle}>Name: {name}</Text>
+        <Text style={styles.modalTitle}>Surname: {surname}</Text>
+        <View style={styles.divider} />
           <Text style={styles.modalSubtitle}>Contact</Text>
           <Text style={styles.modalText}>Email: {userEmail}</Text>
           <Text style={styles.modalText}>Phone: {userPhone}</Text>
@@ -97,7 +112,7 @@ const Header = ({ name,surname, description }) => {
             <TextInput 
             style={styles.input} 
             placeholder="First Name" 
-            value={userName} 
+            value={name} 
             onChangeText={setUserName} 
           />
 
@@ -105,7 +120,7 @@ const Header = ({ name,surname, description }) => {
             <TextInput 
             style={styles.input} 
             placeholder="Last Name" 
-            value={userSurname} 
+            value={surname} 
             onChangeText={setUserSurname} 
           />
 
@@ -130,7 +145,7 @@ const Header = ({ name,surname, description }) => {
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.cancleButton} onPress={setEditModalVisible}>
-            <Text style={styles.cancleText}>cancle</Text>
+            <Text style={styles.cancleText}>cancel</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>
@@ -149,19 +164,20 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   headerBackground: {
-    height: 120,
+    height: 171,
     width: '100%',
-    backgroundColor: '#AB0000',
+    backgroundColor: '#F6F6F6',
     position: 'absolute',
     top: 0,
+    right:-188
   },
   avatar: {
     height: 100,
     width: 100,
     borderRadius: 50,
-    marginTop: 60,
+    marginTop: 111,
     marginLeft: -170,
-    backgroundColor: '#CCC',
+    backgroundColor: '#C9C9C9',
   },
   editIcon: {
     left:158,
@@ -187,18 +203,20 @@ const styles = StyleSheet.create({
     marginBottom:5,
     padding: 5,
     width: 65,
-    backgroundColor: 'red',
+    backgroundColor: '#EF233C',
     borderRadius: 15,
     left:100 
   },
   cancleButton: {
-
     padding: 5,
-    width: 65,
-    height: 35,
-    backgroundColor: 'black',
+    width: 60,
+    height: 30,
+    backgroundColor: '#232323',
     borderRadius: 5,
-    left:100 
+    left:100,
+    justifyContent: 'center'
+    ,alignItems: 'center'
+    ,textAlign: 'center' 
   },
   saveText: {
     color: 'white',
@@ -214,7 +232,7 @@ const styles = StyleSheet.create({
     fontWeight:'bold'
   },
   detailsText: {
-    color: '#FF0000',
+    color: '#EF233C',
     fontSize: 14,
   },
   description: {
